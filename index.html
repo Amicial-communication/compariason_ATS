@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparaison ATS — Amicial CODIR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-dark:   #0C447C;
+    --blue-mid:    #185FA5;
+    --blue-light:  #E6F1FB;
+    --blue-border: #B5D4F4;
+    --teal-mid:    #0F6E56;
+    --teal-light:  #E1F5EE;
+    --teal-border: #5DCAA5;
+    --amber-mid:   #854F0B;
+    --amber-light: #FAEEDA;
+    --amber-border:#FAC775;
+    --red-mid:     #A32D2D;
+    --red-light:   #FCEBEB;
+    --gray-bg:     #F7F6F2;
+    --gray-border: #D3D1C7;
+    --gray-text:   #5F5E5A;
+    --text:        #1E1D1B;
+    --white:       #FFFFFF;
+    --ok:          #1D9E75;
+    --warn:        #BA7517;
+    --ko:          #A32D2D;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── PAGE LAYOUT ── */
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 40px 64px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--blue-mid);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    animation: fadeUp .5s ease both;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--blue-dark);
+    line-height: 1.1;
+    letter-spacing: -.5px;
+  }
+  .header-left p {
+    font-size: 13px;
+    color: var(--gray-text);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+  .header-right {
+    text-align: right;
+  }
+  .header-right .tools {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--blue-mid);
+  }
+  .header-right .date {
+    font-size: 12px;
+    color: var(--gray-text);
+    margin-top: 4px;
+  }
+
+  /* ── CONTEXT BANNER ── */
+  .context-banner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--blue-light);
+    border: 1px solid var(--blue-border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    animation: fadeUp .5s .1s ease both;
+  }
+  .kpi {
+    padding: 18px 20px;
+    border-right: 1px solid var(--blue-border);
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--blue-dark);
+    line-height: 1;
+  }
+  .kpi-lbl {
+    font-size: 12px;
+    color: var(--blue-mid);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--blue-dark);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+
+  /* ── ZONE FRICTION ── */
+  .zones { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
+  .zone {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-left: 4px solid var(--gray-border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    animation: fadeUp .5s ease both;
+  }
+  .zone.critique { border-left-color: var(--red-mid); }
+  .zone.important { border-left-color: var(--amber-mid); }
+  .zone-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .zone-desc { font-size: 13px; color: var(--gray-text); }
+  .zone-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    letter-spacing: .04em;
+  }
+  .badge-critique { background: var(--red-light); color: var(--red-mid); }
+  .badge-important { background: var(--amber-light); color: var(--amber-mid); }
+
+  /* ── CARDS ── */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeUp .5s ease both;
+  }
+  .card.featured { border: 2px solid var(--blue-mid); }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .card-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--text);
+  }
+  .card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .04em;
+  }
+  .badge-blue   { background: var(--blue-light);  color: var(--blue-mid);  }
+  .badge-teal   { background: var(--teal-light);  color: var(--teal-mid);  }
+  .badge-amber  { background: var(--amber-light); color: var(--amber-mid); }
+  .card-tagline {
+    font-size: 12px;
+    color: var(--gray-text);
+    padding: 10px 16px;
+    background: var(--gray-bg);
+    border-bottom: 1px solid var(--gray-border);
+    line-height: 1.5;
+  }
+  .card-features {
+    padding: 12px 16px;
+    flex: 1;
+  }
+  .feat {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 12.5px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0ede6;
+    line-height: 1.4;
+  }
+  .feat:last-child { border-bottom: none; }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .dot-ok   { background: var(--ok);   }
+  .dot-warn { background: var(--warn); }
+  .dot-ko   { background: var(--ko);   }
+  .card-price {
+    font-size: 11.5px;
+    color: var(--gray-text);
+    padding: 10px 16px;
+    background: var(--gray-bg);
+    border-top: 1px solid var(--gray-border);
+    font-style: italic;
+  }
+
+  /* ── SCORING TABLE ── */
+  .score-section { margin-bottom: 40px; }
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--gray-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .score-table th {
+    background: var(--gray-bg);
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-border);
+    border-right: 1px solid var(--gray-border);
+  }
+  .score-table th:last-child { border-right: none; }
+  .score-table td {
+    padding: 14px 16px;
+    font-size: 12.5px;
+    vertical-align: top;
+    border-right: 1px solid var(--gray-border);
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .score-table tr:last-child td { border-bottom: none; }
+  .score-table td:last-child { border-right: none; }
+  .score-table tr:nth-child(even) td { background: var(--gray-bg); }
+  .crit-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+  .crit-sub  { font-size: 11px; color: var(--gray-text); }
+  .pips { display: flex; gap: 3px; margin-bottom: 5px; }
+  .pip {
+    width: 11px; height: 11px;
+    border-radius: 2px;
+  }
+  .pip-blue  { background: var(--blue-mid);  }
+  .pip-green { background: var(--ok);        }
+  .pip-amber { background: var(--warn);      }
+  .pip-off   { background: var(--gray-border); }
+  .score-comment { font-size: 11px; color: var(--gray-text); line-height: 1.4; }
+  .th-blue  { color: var(--blue-mid);  }
+  .th-teal  { color: var(--teal-mid);  }
+  .th-amber { color: var(--amber-mid); }
+
+  /* ── VERDICT ── */
+  .verdict {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-border);
+    border-left: 5px solid var(--blue-mid);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    animation: fadeUp .5s ease both;
+  }
+  .verdict h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: var(--blue-mid);
+    margin-bottom: 12px;
+  }
+  .verdict p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .verdict p:last-child { margin-bottom: 0; }
+
+  /* ── NEXT STEPS ── */
+  .steps { margin-bottom: 40px; }
+  .step {
+    display: flex;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    animation: fadeUp .5s ease both;
+  }
+  .step-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--blue-mid);
+    flex-shrink: 0;
+    line-height: 1.2;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--gray-border);
+    padding-top: 16px;
+    font-size: 11px;
+    color: var(--gray-text);
+    text-align: center;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .zone:nth-child(1) { animation-delay: .15s; }
+  .zone:nth-child(2) { animation-delay: .22s; }
+  .zone:nth-child(3) { animation-delay: .29s; }
+  .card:nth-child(1) { animation-delay: .1s; }
+  .card:nth-child(2) { animation-delay: .2s; }
+  .card:nth-child(3) { animation-delay: .3s; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .page { padding: 24px; }
+    .card, .zone, .step, .verdict { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <h1>Comparaison ATS</h1>
+      <p>Synthèse atelier diagnostic parcours &amp; sélection — Document CODIR</p>
+    </div>
+    <div class="header-right">
+      <div class="tools">Beetween · Flatchr · Lucca</div>
+      <div class="date">Amicial · Service Autonomie à Domicile · Avril 2026</div>
+    </div>
+  </header>
+
+  <!-- CONTEXT BANNER -->
+  <div class="context-banner">
+    <div class="kpi">
+      <div class="kpi-val">300</div>
+      <div class="kpi-lbl">recrutements / an</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">30</div>
+      <div class="kpi-lbl">frictions identifiées</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">×8</div>
+      <div class="kpi-lbl">friction dominante : outil inadapté</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">4</div>
+      <div class="kpi-lbl">étapes critiques dans le parcours</div>
+    </div>
+  </div>
+
+  <!-- ZONES DE FRICTION -->
+  <h2 class="section-title">Rappel des zones de friction prioritaires</h2>
+  <div class="zones">
+    <div class="zone critique">
+      <div>
+        <div class="zone-title">Zone 1 — Création &amp; diffusion de l'offre (étapes 3 à 6)</div>
+        <div class="zone-desc">Personnalisation manuelle, diffusion canal par canal, réception sur boîtes mail éclatées. Avec 300 recrutements/an, ce goulot est permanent et génère un risque structurel de perte d'information à chaque campagne.</div>
+      </div>
+      <span class="zone-badge badge-critique">CRITIQUE</span>
+    </div>
+    <div class="zone important">
+      <div>
+        <div class="zone-title">Zone 2 — Traitement &amp; traçabilité des candidats (étapes 7 à 12)</div>
+        <div class="zone-desc">Pas de CVthèque centralisée, tri en local non partagé, appels sans trace, retours négatifs oubliés. L'absence de retour structuré est la principale cause de dégradation de l'image employeur dans un secteur en tension de recrutement.</div>
+      </div>
+      <span class="zone-badge badge-important">IMPORTANT</span>
+    </div>
+    <div class="zone critique">
+      <div>
+        <div class="zone-title">Zone 3 — Bascule recrutement → contractualisation (étapes 13 &amp; 17)</div>
+        <div class="zone-desc">Fiche candidat papier, confirmation manuelle. Chaque recrutement génère un risque d'erreur ou de perte d'information. L'absence d'automatisation à ce stade crée un goulet particulièrement visible à ce volume.</div>
+      </div>
+      <span class="zone-badge badge-critique">CRITIQUE</span>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <h2 class="section-title">Vue d'ensemble des 3 solutions</h2>
+  <div class="cards">
+
+    <!-- Beetween -->
+    <div class="card featured">
+      <div class="card-head">
+        <span class="card-name">Beetween</span>
+        <span class="card-badge badge-blue">RECOMMANDÉ</span>
+      </div>
+      <div class="card-tagline">ATS français spécialisé, 800+ clients, 180 jobboards. Pensé pour le recruteur terrain non-expert digital à fort volume.</div>
+      <div class="card-features">
+        <div class="feat"><span class="dot dot-ok"></span>Multidiffusion 180+ jobboards en 1 clic, gestion des slots par canal</div>
+        <div class="feat"><span class="dot dot-ok"></span>CVthèque partagée + réactivation automatique sur nouveau besoin</div>
+        <div class="feat"><span class="dot dot-ok"></span>Automatisation complète : rejet, relance, alerte RH, collecte pièces</div>
+        <div class="feat"><span class="dot dot-ok"></span>Kanban candidats, tags, partage d'équipe natif</div>
+        <div class="feat"><span class="dot dot-ok"></span>Application mobile fonctionnelle (notation depuis le terrain)</div>
+        <div class="feat"><span class="dot dot-ok"></span>Workflow de validation N+1 intégré</div>
+        <div class="feat"><span class="dot dot-warn"></span>Légère courbe d'apprentissage initiale signalée par certains utilisateurs</div>
+        <div class="feat"><span class="dot dot-warn"></span>Pas d'essai gratuit — démo sur demande uniquement</div>
+      </div>
+      <div class="card-price">10000€ par an avec le déploiement offert. Politique tarifaire aux fonctionnalités et non à la licence donc impossible de descendre plus bas</div>
+    </div>
+
+    <!-- Flatchr -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-name">Flatchr</span>
+        <span class="card-badge badge-teal">ALTERNATIF SOLIDE</span>
+      </div>
+      <div class="card-tagline">ATS + brique CRM recrutement. Conçu pour le recrutement distribué où chaque manager agit en autonomie.</div>
+      <div class="card-features">
+        <div class="feat"><span class="dot dot-ok"></span>Multidiffusion 160+ jobboards, interface simplifiée manager</div>
+        <div class="feat"><span class="dot dot-ok"></span>CVthèque avec recherche full-text sur contenu des CVs</div>
+        <div class="feat"><span class="dot dot-ok"></span>Automatisation : refus, relances, planification entretiens</div>
+        <div class="feat"><span class="dot dot-ok"></span>Accès manager sans formation lourde (interface allégée)</div>
+        <div class="feat"><span class="dot dot-ok"></span>Application mobile + Zapier pour intégrations tierces</div>
+        <div class="feat"><span class="dot dot-warn"></span>Reporting analytique jugé limité par rapport aux outils avancés</div>
+        <div class="feat"><span class="dot dot-warn"></span>Intégrations SIRH natives insuffisantes selon certains avis</div>
+        <div class="feat"><span class="dot dot-ko"></span>Ralentissements signalés sur pics de volume importants</div>
+      </div>
+      <div class="card-price">14000€ par an, on le réduire à 11000€ mais sans les espaces réservés à chaque secteur. Même politique tarifaire que Beetween</div>
+    </div>
+
+    <!-- Lucca -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-name">Lucca</span>
+        <span class="card-badge badge-amber">NOUVEAU (2025)</span>
+      </div>
+      <div class="card-tagline">Module ATS lancé en juin 2025, intégré à la suite SIRH Lucca. Pertinent uniquement si Amicial est déjà client Lucca.</div>
+      <div class="card-features">
+        <div class="feat"><span class="dot dot-ok"></span>Intégration native SIRH : candidat → dossier salarié en 1 clic</div>
+        <div class="feat"><span class="dot dot-ok"></span>Kanban personnalisable, évaluation collaborative managers/RH</div>
+        <div class="feat"><span class="dot dot-ok"></span>Page carrière multi-entités (agences)</div>
+        <div class="feat"><span class="dot dot-warn"></span>Diffusion jobboards limitée (catalogue en construction)</div>
+        <div class="feat"><span class="dot dot-warn"></span>Workflow d'automatisation et ouverture de poste encore en déploiement</div>
+        <div class="feat"><span class="dot dot-ko"></span>Pas de CVthèque opérationnelle à ce stade</div>
+        <div class="feat"><span class="dot dot-ko"></span>Pas conçu pour 300 recrutements/an sur profils terrain peu digitalisés</div>
+        <div class="feat"><span class="dot dot-ko"></span>Outil trop jeune — maturité fonctionnelle insuffisante pour Amicial</div>
+      </div>
+      <div class="card-price">Sur devis — module additionnel suite Lucca SIRH uniquement, non pertinent hors cet écosystème. Devis en attente, mais au moins 12000€ sans compter le délpoiement</div>
+    </div>
+
+  </div>
+
+  <!-- SCORING TABLE -->
+  <div class="score-section">
+    <h2 class="section-title">Évaluation sur les 3 critères prioritaires Amicial</h2>
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th style="width:28%">Critère</th>
+          <th class="th-blue" style="width:24%">Beetween</th>
+          <th class="th-teal" style="width:24%">Flatchr</th>
+          <th class="th-amber" style="width:24%">Lucca</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="crit-name">1. Simplicité terrain</div>
+            <div class="crit-sub">Interface mobile, prise en main sans formation lourde</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-off"></div>
+            </div>
+            <div class="score-comment">Interface épurée, mobile validé. Légère courbe d'initialisation signalée.</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div>
+            </div>
+            <div class="score-comment">Pensé dès le départ pour le manager non-RH, accès simplifié natif.</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-amber"></div><div class="pip pip-amber"></div><div class="pip pip-off"></div><div class="pip pip-off"></div><div class="pip pip-off"></div>
+            </div>
+            <div class="score-comment">Intuitive pour des profils RH formés. Pas conçu pour le terrain autonome.</div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="crit-name">2. Automatisation des flux</div>
+            <div class="crit-sub">Accusé réception, rejet, alerte RH, collecte pièces contrat</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div>
+            </div>
+            <div class="score-comment">Automatisation complète sur tout le parcours, configurable sans développeur.</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-off"></div>
+            </div>
+            <div class="score-comment">Automatisation solide. Intégrations tierces via Zapier (moins natif).</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-amber"></div><div class="pip pip-amber"></div><div class="pip pip-off"></div><div class="pip pip-off"></div><div class="pip pip-off"></div>
+            </div>
+            <div class="score-comment">Workflows en cours de développement. Pas opérationnels à 300 rec./an.</div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="crit-name">3. CVthèque multi-sources</div>
+            <div class="crit-sub">Réactivation, recherche full-text, secteur géographique</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div><div class="pip pip-blue"></div>
+            </div>
+            <div class="score-comment">CVthèque partagée, réactivation auto sur matching nouveau poste.</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-green"></div><div class="pip pip-off"></div>
+            </div>
+            <div class="score-comment">Recherche full-text efficace, sourcing LinkedIn. Réactivation auto moins poussée.</div>
+          </td>
+          <td>
+            <div class="pips">
+              <div class="pip pip-amber"></div><div class="pip pip-off"></div><div class="pip pip-off"></div><div class="pip pip-off"></div><div class="pip pip-off"></div>
+            </div>
+            <div class="score-comment">Pas de CVthèque opérationnelle à date. Fonctionnalité prévue fin 2025/2026.</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <h3>Recommandation pour le CODIR</h3>
+    <p>Pour le contexte Amicial — 300 recrutements/an, profil terrain peu digitalisé, recruteur unique portant tout le processus — <strong>Beetween est la solution la plus alignée</strong> sur les 3 critères prioritaires identifiés en atelier. C'est l'unique des 3 à couvrir nativement l'ensemble du parcours, notamment la bascule recrutement → contractualisation (alerte RH + collecte pièces automatique). Le point d'attention à soulever en démo : combien de clics pour créer et diffuser une offre, et l'application mobile est-elle utilisable depuis un téléphone professionnel terrain ?</p>
+    <p><strong>Flatchr</strong> constitue une alternative sérieuse si le CODIR souhaite prioriser l'autonomie des managers d'agence. Son modèle « recrutement distribué » peut résonner dans une organisation à 30 agences. La question à poser lors du devis : comment se comporte l'outil à 300 recrutements/an sur un seul poste en tension ?</p>
+    <p><strong>Lucca Recrutement</strong>, lancé en 2025, est trop immature fonctionnellement pour les enjeux d'Amicial aujourd'hui. À reconsidérer dans 18-24 mois, ou si Amicial venait à s'équiper de la suite SIRH Lucca par ailleurs.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    Amicial — Service Autonomie à Domicile &nbsp;·&nbsp; Synthèse atelier ATS &nbsp;·&nbsp; Avril 2026 &nbsp;·&nbsp; Document confidentiel CODIR
+  </footer>
+
+</div>
+</body>
+</html>
